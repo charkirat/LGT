@@ -15,7 +15,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 80px; /* Add space for the eco-fact box */
         }
 
         .container {
@@ -28,7 +28,7 @@
             width: 100%;
             background-color: rgba(200, 230, 201, 0.6);
             height: 8px;
-            position: sticky;
+            position: sticky; /* Keeps the progress bar at the top */
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -322,7 +322,6 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-
             border-top: 3px solid #4caf50;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
             z-index: 100;
@@ -339,7 +338,7 @@
 
         .fact-icon {
             font-size: 1.5em;
-            animation: pulse 2s infinite;
+            animation: pulse 2s infinite; /* Adds a pulsating animation to the icon */
         }
 
         @keyframes pulse {
@@ -348,7 +347,7 @@
         }
 
         .completion-celebration {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             top: 0;
             left: 0;
@@ -366,7 +365,7 @@
             border-radius: 20px;
             text-align: center;
             max-width: 400px;
-            animation: celebrationPop 0.5s ease;
+            animation: celebrationPop 0.5s ease; /* Pop-in animation */
         }
 
         @keyframes celebrationPop {
@@ -395,7 +394,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            opacity: 0.3;
+            opacity: 0.3; /* Badges are faded until unlocked */
             transition: opacity 0.5s ease;
         }
 
@@ -427,6 +426,7 @@
             color: #666;
         }
 
+        /* Design for smaller screens */
         @media (max-width: 768px) {
             .container {
                 padding: 0 15px;
@@ -437,7 +437,7 @@
             }
             
             .stats-container {
-                flex-direction: column;
+                flex-direction: column; /* Stacks stats vertically */
             }
             
             .input-container {
@@ -454,18 +454,18 @@
             }
             
             .main-content-wrapper {
-                flex-direction: column;
+                flex-direction: column; /* Stacks main content and badges vertically */
                 gap: 0;
             }
 
             .badges-left, .badges-right {
-                flex-direction: row;
+                flex-direction: row; /* Badges are arranged horizontally */
                 justify-content: center;
                 margin-bottom: 20px;
             }
 
             .main-content {
-                order: 2; /* Main content comes after the badges */
+                order: 2;
             }
         }
     </style>
@@ -568,7 +568,7 @@
     </div>
 
 <script>
-    // Updated daily actions with Australian units and a few new ideas
+    // Pre-defined actions and eco facts.
     const dailyActions = [
         { task: "Unplug devices when not in use", impact: "Reduces phantom energy use and can save up to 10% on electricity bills", theme: "electricity" },
         { task: "Use a reusable coffee cup", impact: "Prevents 500+ disposable cups from landfills annually", theme: "waste" },
@@ -593,7 +593,6 @@
         { task: "Choose products with less packaging", impact: "Minimizes plastic waste and helps reduce litter", theme: "food" }
     ];
 
-    // Updated eco facts with Australian units
     const ecoFacts = [
         "Recycling one aluminium can saves enough energy to run a TV for 3 hours and takes only 60 days to be back on the shelf",
         "Turning off the tap while brushing teeth can save up to 30 litres of water per day",
@@ -620,7 +619,7 @@
     let userAddedActions = [];
     let allActions = [];
 
-    // Initialize date display
+    // Date display
     document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-AU', {
         weekday: 'long',
         year: 'numeric',
@@ -628,6 +627,7 @@
         day: 'numeric'
     });
 
+    // Function to rotate and display new eco facts
     function rotateEcoFacts() {
         const factText = document.getElementById("factText");
         factText.style.opacity = '0';
@@ -642,9 +642,9 @@
     function updateStats() {
         const today = new Date().toDateString();
         
+        // Check for a new day to reset daily count and update streak
         if (stats.lastActiveDate !== today) {
             stats.completedToday = 0;
-            // Handle streak logic for a new day
             if (stats.lastActiveDate) {
                 const lastDate = new Date(stats.lastActiveDate);
                 const todayDate = new Date(today);
@@ -662,14 +662,17 @@
         const checkedItems = document.querySelectorAll("#myUL li.checked");
         stats.completedToday = checkedItems.length;
         
+        // Update the numbers in the stat cards
         document.getElementById('todayCompleted').textContent = stats.completedToday;
         document.getElementById('totalCompleted').textContent = stats.totalCompleted;
         document.getElementById('streakCount').textContent = stats.streak;
         
+        // Save stats
         localStorage.setItem('greenStats', JSON.stringify(stats));
         updateBadges();
     }
 
+    // Function to update the visual state of the badges
     function updateBadges() {
         const currentStreak = stats.streak;
         const badges = document.querySelectorAll('.badge');
@@ -683,6 +686,7 @@
         });
     }
 
+    // Function to load and display the actions for the day
     function loadAndDisplayActions() {
         const today = new Date().toDateString();
         const savedDailyActions = JSON.parse(localStorage.getItem("dailyRandomActions")) || {};
@@ -690,8 +694,9 @@
         if (savedDailyActions.date === today && savedDailyActions.actions) {
             dailyRandomActions = savedDailyActions.actions;
         } else {
+            // Shuffle and select 5 new actions
             const shuffled = dailyActions.sort(() => 0.5 - Math.random());
-            dailyRandomActions = shuffled.slice(0, 5); // Show 5 random actions per day
+            dailyRandomActions = shuffled.slice(0, 5);
             localStorage.setItem("dailyRandomActions", JSON.stringify({ date: today, actions: dailyRandomActions }));
         }
 
@@ -707,7 +712,7 @@
 
         actionsToDisplay.forEach(action => {
             const li = document.createElement("li");
-            li.setAttribute("data-theme", action.theme); // Add theme data attribute for filtering
+            li.setAttribute("data-theme", action.theme);
             
             const taskIcon = document.createElement("div");
             taskIcon.className = "task-icon";
@@ -728,7 +733,6 @@
             li.appendChild(taskIcon);
             li.appendChild(taskContent);
             
-            // Add a flag for user-added actions
             if (userAddedActions.some(ua => ua.task === action.task)) {
                  li.dataset.userAdded = "true";
             }
@@ -741,6 +745,7 @@
         updateStats();
     }
 
+    // Function to add a close button to a list item for removal
     function addCloseButton(li, actionToRemove) {
         const span = document.createElement("SPAN");
         span.innerHTML = "×";
@@ -749,13 +754,11 @@
 
         span.onclick = function (e) {
             e.stopPropagation();
-            // Remove the action from allActions array
             const allIndex = allActions.findIndex(a => a.task === actionToRemove.task);
             if (allIndex > -1) {
                 allActions.splice(allIndex, 1);
             }
 
-            // If it's a user-added action, remove it from the persistent storage
             if (li.dataset.userAdded === "true") {
                 const userIndex = userAddedActions.findIndex(ua => ua.task === actionToRemove.task);
                 if (userIndex > -1) {
@@ -793,6 +796,7 @@
         });
     }
 
+    // Functions to show and hide the completion pop-up
     function showCelebration() {
         document.getElementById('completionCelebration').style.display = 'flex';
     }
@@ -801,6 +805,7 @@
         document.getElementById('completionCelebration').style.display = 'none';
     }
 
+    // Function to update the progress bar based on completed actions
     function updateProgress() {
         const items = document.querySelectorAll("#myUL li");
         const checked = document.querySelectorAll("#myUL li.checked");
@@ -808,12 +813,12 @@
         document.getElementById("progressBar").style.width = percent + "%";
     }
 
+    // Function to handle adding a new user-defined action
     function newElement() {
         const inputValue = document.getElementById("myInput").value.trim();
         const categoryValue = document.getElementById("myCategory").value;
         
         if (inputValue === '') {
-            // Use a custom message box instead of alert()
             const messageBox = document.createElement('div');
             messageBox.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ef9a9a; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000;';
             messageBox.textContent = "Please enter a green action!";
@@ -833,7 +838,6 @@
         
         document.getElementById("myInput").value = "";
         
-        // Re-display all actions to include the new one
         allActions = [...dailyRandomActions, ...userAddedActions];
         const activeFilter = document.querySelector(".filter-btn.active").dataset.theme;
         filterActions(activeFilter);
@@ -842,6 +846,7 @@
         updateStats();
     }
     
+    // Function to filter and display actions based on category
     function filterActions(theme) {
         const actionsToFilter = (theme === "all") ? allActions : allActions.filter(action => action.theme === theme);
         
@@ -865,10 +870,9 @@
     });
 
     rotateEcoFacts();
-    setInterval(rotateEcoFacts, 12000);
+    setInterval(rotateEcoFacts, 12000); // Rotate facts every 12 seconds
     loadAndDisplayActions();
     updateStats();
-
 </script>
 
 </body>
