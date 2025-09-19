@@ -1,0 +1,875 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Green Actions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: rgba(200, 230, 201, 0.6);
+            height: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            transition: width 0.5s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #388e3c);
+            padding: 40px 0;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            margin: 0 0 30px 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .input-container {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        input, select {
+            flex: 1;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+        }
+        
+        select {
+            flex: 0.5;
+            border-left: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .addBtn {
+            padding: 15px 25px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .addBtn:hover {
+            background: #43a047;
+            transform: translateY(-1px);
+        }
+
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .badges-left, .badges-right {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 800px;
+        }
+        
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn {
+            background: #f1f8e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #e8f5e9;
+        }
+
+        .filter-btn.active {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+            box-shadow: 0 2px 5px rgba(46, 125, 50, 0.3);
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 200px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            background: white;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f1f8e9;
+            padding: 20px;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .section-title {
+            margin: 0;
+            color: #2e7d32;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        .daily-actions {
+            padding: 0;
+        }
+
+        .today-date {
+            text-align: center;
+            padding: 20px;
+            background: #e8f5e9;
+            font-weight: 500;
+            color: #2e7d32;
+            font-size: 1.1em;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        ul li {
+            cursor: pointer;
+            position: relative;
+            padding: 20px;
+            background: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        ul li:hover {
+            background: #f8fffe;
+            padding-left: 25px;
+        }
+
+        ul li.checked {
+            background: #e8f5e9;
+            color: #2e7d32;
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        .task-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        ul li.checked .task-icon {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+
+        ul li.checked .task-icon::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-impact {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .close {
+            padding: 5px 10px;
+            color: #999;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+
+        .close:hover {
+            background-color: #ef5350;
+            color: white;
+        }
+
+        .eco-fact-box {
+            background: linear-gradient(135deg, #2e7d32, #388e3c);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+
+            border-top: 3px solid #4caf50;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+
+        .eco-fact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .fact-icon {
+            font-size: 1.5em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .completion-celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .celebration-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            animation: celebrationPop 0.5s ease;
+        }
+
+        @keyframes celebrationPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .celebration-emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .btn-close-celebration {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0.3;
+            transition: opacity 0.5s ease;
+        }
+
+        .badge.unlocked {
+            opacity: 1;
+        }
+
+        .badge-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #ccc;
+            font-size: 2em;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .badge.unlocked .badge-icon {
+            background-color: #4caf50;
+        }
+
+        .badge-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            .input-container {
+                flex-direction: column;
+                border-radius: 15px;
+            }
+            
+            input, select, .addBtn {
+                border-radius: 0;
+            }
+            
+            .addBtn {
+                border-radius: 0 0 15px 15px;
+            }
+            
+            .main-content-wrapper {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .badges-left, .badges-right {
+                flex-direction: row;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                order: 2; /* Main content comes after the badges */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <div id="progressBar"></div>
+    </div>
+
+    <div class="header">
+        <div class="container">
+            <h1>Little Green Actions 🌱</h1>
+            <p>Building sustainable habits, one small action at a time</p>
+            <div class="input-container">
+                <input type="text" id="myInput" placeholder="Add your own green action...">
+                <select id="myCategory">
+                    <option value="electricity">Electricity 💡</option>
+                    <option value="water">Water 💧</option>
+                    <option value="waste">Waste ♻️</option>
+                    <option value="food">Food 🥦</option>
+                    <option value="transportation">Transport 🚴</option>
+                </select>
+                <button onclick="newElement()" class="addBtn">Add</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content-wrapper">
+        <div class="badges-left">
+            <div class="badge" data-milestone="5">
+                <div class="badge-icon">⭐</div>
+                <div class="badge-text">5-Day Streak</div>
+            </div>
+            <div class="badge" data-milestone="25">
+                <div class="badge-icon">🌍</div>
+                <div class="badge-text">25-Day Streak</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="todayCompleted">0</div>
+                    <div class="stat-label">Today's Actions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCompleted">0</div>
+                    <div class="stat-label">Total Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="streakCount">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Today's Green Actions</h2>
+                </div>
+                <div class="today-date" id="todayDate"></div>
+                <div class="filter-container">
+                    <button class="filter-btn active" data-theme="all">All</button>
+                    <button class="filter-btn" data-theme="electricity">Electricity 💡</button>
+                    <button class="filter-btn" data-theme="water">Water 💧</button>
+                    <button class="filter-btn" data-theme="waste">Waste ♻️</button>
+                    <button class="filter-btn" data-theme="food">Food 🥦</button>
+                    <button class="filter-btn" data-theme="transportation">Transport 🚴</button>
+                </div>
+                <ul id="myUL" class="daily-actions"></ul>
+            </div>
+        </div>
+        
+        <div class="badges-right">
+            <div class="badge" data-milestone="10">
+                <div class="badge-icon">🌿</div>
+                <div class="badge-text">10-Day Streak</div>
+            </div>
+            <div class="badge" data-milestone="50">
+                <div class="badge-icon">🚀</div>
+                <div class="badge-text">50-Day Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="completion-celebration" id="completionCelebration">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉🌍🎉</div>
+            <h2>Amazing!</h2>
+            <p>You've completed all your green actions for today! Every small step counts toward a healthier planet.</p>
+            <button class="btn-close-celebration" onclick="closeCelebration()">Continue</button>
+        </div>
+    </div>
+
+    <div class="eco-fact-box" id="ecoFactBox">
+        <div class="eco-fact-content">
+            <span class="fact-icon">🌍</span>
+            <span id="factText">Loading eco fact...</span>
+        </div>
+    </div>
+
+<script>
+    // Updated daily actions with Australian units and a few new ideas
+    const dailyActions = [
+        { task: "Unplug devices when not in use", impact: "Reduces phantom energy use and can save up to 10% on electricity bills", theme: "electricity" },
+        { task: "Use a reusable coffee cup", impact: "Prevents 500+ disposable cups from landfills annually", theme: "waste" },
+        { task: "Take a 5-minute shorter shower", impact: "Saves up to 47 litres of water per shower", theme: "water" },
+        { task: "Recycle paper and plastics properly", impact: "Keeps materials in use and reduces landfill waste by 30%", theme: "waste" },
+        { task: "Eat a plant-based meal", impact: "Reduces your carbon footprint by the equivalent of driving 5 kilometres", theme: "food" },
+        { task: "Bring reusable bags to the store", impact: "Prevents 6+ single-use plastic bags from polluting waterways", theme: "waste" },
+        { task: "Turn off lights when leaving a room", impact: "Saves enough energy to power a TV for 4 hours", theme: "electricity" },
+        { task: "Compost food scraps", impact: "Reduces methane emissions and creates nutrient-rich soil", theme: "food" },
+        { task: "Use stairs instead of elevator", impact: "Saves energy and improves your health", theme: "electricity" },
+        { task: "Print documents double-sided", impact: "Cuts paper consumption in half", theme: "waste" },
+        { task: "Air-dry clothes instead of using dryer", impact: "Reduces energy consumption by up to 4 kWh per load", theme: "electricity" },
+        { task: "Use public transport or bike", impact: "Reduces CO2 emissions by up to 4 tonnes per year", theme: "transportation" },
+        { task: "Fix leaky faucets", impact: "A single drip per second can waste over 19 litres of water daily", theme: "water" },
+        { task: "Switch to LED light bulbs", impact: "Uses 75% less energy and lasts 25 times longer", theme: "electricity" },
+        { task: "Choose products with minimal packaging", impact: "Reduces waste stream and supports sustainable businesses", theme: "waste" },
+        { task: "Plan your meals to reduce food waste", impact: "Saves money and prevents food from ending up in landfill", theme: "food" },
+        { task: "Sustainably dispose of batteries", impact: "Prevents toxic chemicals from entering the environment", theme: "waste" },
+        { task: "Carpool to work or school", impact: "Reduces traffic congestion and fossil fuel consumption", theme: "transportation" },
+        { task: "Take shorter, cooler showers", impact: "Saves energy used for heating water and reduces water consumption", theme: "water" },
+        { task: "Buy local produce at a farmers' market", impact: "Reduces transportation emissions and supports local economy", theme: "food" },
+        { task: "Choose products with less packaging", impact: "Minimizes plastic waste and helps reduce litter", theme: "food" }
+    ];
+
+    // Updated eco facts with Australian units
+    const ecoFacts = [
+        "Recycling one aluminium can saves enough energy to run a TV for 3 hours and takes only 60 days to be back on the shelf",
+        "Turning off the tap while brushing teeth can save up to 30 litres of water per day",
+        "A single plastic bag can take 1,000 years to decompose, but a reusable bag can replace over 2,700 single-use bags",
+        "Composting food scraps reduces methane emissions by 50% compared to sending them to landfills",
+        "LED bulbs use 75% less energy than incandescent bulbs and last 25 times longer",
+        "Every tonne of recycled paper saves 17 trees, 26,000 litres of water, and 2.5 cubic metres of landfill space",
+        "If everyone in Australia used cold water for washing clothes, we'd save a massive amount of energy",
+        "One mature tree absorbs 22 kilograms of CO2 per year and produces enough oxygen for two people daily",
+        "Reducing food waste by just 15% could feed millions of people every year",
+        "Using a programmable thermostat can reduce heating and cooling costs by up to 23%"
+    ];
+
+    let factIndex = 0;
+    let stats = JSON.parse(localStorage.getItem('greenStats')) || {
+        totalCompleted: 0,
+        streak: 0,
+        lastActiveDate: null,
+        completedToday: 0
+    };
+    
+    // Store both daily random actions and user-added actions
+    let dailyRandomActions = [];
+    let userAddedActions = [];
+    let allActions = [];
+
+    // Initialize date display
+    document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-AU', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    function rotateEcoFacts() {
+        const factText = document.getElementById("factText");
+        factText.style.opacity = '0';
+        
+        setTimeout(() => {
+            factText.textContent = ecoFacts[factIndex];
+            factText.style.opacity = '1';
+            factIndex = (factIndex + 1) % ecoFacts.length;
+        }, 300);
+    }
+
+    function updateStats() {
+        const today = new Date().toDateString();
+        
+        if (stats.lastActiveDate !== today) {
+            stats.completedToday = 0;
+            // Handle streak logic for a new day
+            if (stats.lastActiveDate) {
+                const lastDate = new Date(stats.lastActiveDate);
+                const todayDate = new Date(today);
+                const dayDiff = (todayDate - lastDate) / (1000 * 60 * 60 * 24);
+                
+                if (dayDiff === 1) {
+                    stats.streak++;
+                } else {
+                    stats.streak = 0;
+                }
+            }
+            stats.lastActiveDate = today;
+        }
+        
+        const checkedItems = document.querySelectorAll("#myUL li.checked");
+        stats.completedToday = checkedItems.length;
+        
+        document.getElementById('todayCompleted').textContent = stats.completedToday;
+        document.getElementById('totalCompleted').textContent = stats.totalCompleted;
+        document.getElementById('streakCount').textContent = stats.streak;
+        
+        localStorage.setItem('greenStats', JSON.stringify(stats));
+        updateBadges();
+    }
+
+    function updateBadges() {
+        const currentStreak = stats.streak;
+        const badges = document.querySelectorAll('.badge');
+        badges.forEach(badge => {
+            const milestone = parseInt(badge.dataset.milestone);
+            if (currentStreak >= milestone) {
+                badge.classList.add('unlocked');
+            } else {
+                badge.classList.remove('unlocked');
+            }
+        });
+    }
+
+    function loadAndDisplayActions() {
+        const today = new Date().toDateString();
+        const savedDailyActions = JSON.parse(localStorage.getItem("dailyRandomActions")) || {};
+        
+        if (savedDailyActions.date === today && savedDailyActions.actions) {
+            dailyRandomActions = savedDailyActions.actions;
+        } else {
+            const shuffled = dailyActions.sort(() => 0.5 - Math.random());
+            dailyRandomActions = shuffled.slice(0, 5); // Show 5 random actions per day
+            localStorage.setItem("dailyRandomActions", JSON.stringify({ date: today, actions: dailyRandomActions }));
+        }
+
+        userAddedActions = JSON.parse(localStorage.getItem("userAddedActions")) || [];
+        
+        allActions = [...dailyRandomActions, ...userAddedActions];
+        displayActions(allActions);
+    }
+
+    function displayActions(actionsToDisplay) {
+        const ul = document.getElementById("myUL");
+        ul.innerHTML = "";
+
+        actionsToDisplay.forEach(action => {
+            const li = document.createElement("li");
+            li.setAttribute("data-theme", action.theme); // Add theme data attribute for filtering
+            
+            const taskIcon = document.createElement("div");
+            taskIcon.className = "task-icon";
+            
+            const taskContent = document.createElement("div");
+            taskContent.className = "task-content";
+            
+            const taskText = document.createElement("div");
+            taskText.textContent = action.task;
+            
+            const taskImpact = document.createElement("div");
+            taskImpact.className = "task-impact";
+            taskImpact.textContent = action.impact;
+            
+            taskContent.appendChild(taskText);
+            taskContent.appendChild(taskImpact);
+            
+            li.appendChild(taskIcon);
+            li.appendChild(taskContent);
+            
+            // Add a flag for user-added actions
+            if (userAddedActions.some(ua => ua.task === action.task)) {
+                 li.dataset.userAdded = "true";
+            }
+            
+            ul.appendChild(li);
+            addCloseButton(li, action);
+        });
+
+        updateProgress();
+        updateStats();
+    }
+
+    function addCloseButton(li, actionToRemove) {
+        const span = document.createElement("SPAN");
+        span.innerHTML = "×";
+        span.className = "close";
+        li.appendChild(span);
+
+        span.onclick = function (e) {
+            e.stopPropagation();
+            // Remove the action from allActions array
+            const allIndex = allActions.findIndex(a => a.task === actionToRemove.task);
+            if (allIndex > -1) {
+                allActions.splice(allIndex, 1);
+            }
+
+            // If it's a user-added action, remove it from the persistent storage
+            if (li.dataset.userAdded === "true") {
+                const userIndex = userAddedActions.findIndex(ua => ua.task === actionToRemove.task);
+                if (userIndex > -1) {
+                    userAddedActions.splice(userIndex, 1);
+                    localStorage.setItem("userAddedActions", JSON.stringify(userAddedActions));
+                }
+            }
+            
+            li.remove();
+            updateProgress();
+            updateStats();
+        };
+
+        li.addEventListener('click', function (e) {
+            if (e.target === span) return;
+            
+            const wasChecked = li.classList.contains('checked');
+            li.classList.toggle('checked');
+            
+            if (!wasChecked && li.classList.contains('checked')) {
+                stats.totalCompleted++;
+                
+                const allItems = document.querySelectorAll("#myUL li");
+                const checkedItems = document.querySelectorAll("#myUL li.checked");
+                
+                if (allItems.length > 0 && checkedItems.length === allItems.length) {
+                    setTimeout(showCelebration, 500);
+                }
+            } else if (wasChecked && !li.classList.contains('checked')) {
+                stats.totalCompleted = Math.max(0, stats.totalCompleted - 1);
+            }
+            
+            updateProgress();
+            updateStats();
+        });
+    }
+
+    function showCelebration() {
+        document.getElementById('completionCelebration').style.display = 'flex';
+    }
+
+    function closeCelebration() {
+        document.getElementById('completionCelebration').style.display = 'none';
+    }
+
+    function updateProgress() {
+        const items = document.querySelectorAll("#myUL li");
+        const checked = document.querySelectorAll("#myUL li.checked");
+        const percent = items.length ? (checked.length / items.length) * 100 : 0;
+        document.getElementById("progressBar").style.width = percent + "%";
+    }
+
+    function newElement() {
+        const inputValue = document.getElementById("myInput").value.trim();
+        const categoryValue = document.getElementById("myCategory").value;
+        
+        if (inputValue === '') {
+            // Use a custom message box instead of alert()
+            const messageBox = document.createElement('div');
+            messageBox.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ef9a9a; color: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000;';
+            messageBox.textContent = "Please enter a green action!";
+            document.body.appendChild(messageBox);
+            setTimeout(() => messageBox.remove(), 2000);
+            return;
+        }
+        
+        const newAction = {
+            task: inputValue,
+            impact: "Your personal contribution to a greener planet!",
+            theme: categoryValue
+        };
+        
+        userAddedActions.push(newAction);
+        localStorage.setItem("userAddedActions", JSON.stringify(userAddedActions));
+        
+        document.getElementById("myInput").value = "";
+        
+        // Re-display all actions to include the new one
+        allActions = [...dailyRandomActions, ...userAddedActions];
+        const activeFilter = document.querySelector(".filter-btn.active").dataset.theme;
+        filterActions(activeFilter);
+        
+        updateProgress();
+        updateStats();
+    }
+    
+    function filterActions(theme) {
+        const actionsToFilter = (theme === "all") ? allActions : allActions.filter(action => action.theme === theme);
+        
+        displayActions(actionsToFilter);
+    }
+
+    document.querySelectorAll(".filter-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
+            
+            const theme = this.dataset.theme;
+            filterActions(theme);
+        });
+    });
+
+    document.getElementById("myInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            newElement();
+        }
+    });
+
+    rotateEcoFacts();
+    setInterval(rotateEcoFacts, 12000);
+    loadAndDisplayActions();
+    updateStats();
+
+</script>
+
+</body>
+</html>
